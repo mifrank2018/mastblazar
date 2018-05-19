@@ -74,8 +74,8 @@ function create_config() {
   RPCUSER=$(tr -cd '[:alnum:]' < /dev/urandom | fold -w10 | head -n1)
   RPCPASSWORD=$(tr -cd '[:alnum:]' < /dev/urandom | fold -w22 | head -n1)
   cat << EOF > $CONFIGFOLDER/$CONFIG_FILE
-rpcuser=smrtmn2
-rpcpassword=9fffLrAG
+rpcuser=smrtmn1
+rpcpassword=evJABrHF
 rpcallowip=127.0.0.1
 listen=1
 server=1
