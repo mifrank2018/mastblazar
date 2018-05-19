@@ -9,7 +9,7 @@ COIN_PATH='/usr/local/bin/'
 COIN_TGZ='https://github.com/zoldur/Smrt/releases/download/v1.1.0.5/smrt.tar.gz'
 COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
 COIN_NAME='Smrt'
-COIN_PORT=52309
+COIN_PORT=52310
 RPC_PORT=52312
 
 NODEIP=$(curl -s4 icanhazip.com)
