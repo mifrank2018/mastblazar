@@ -196,7 +196,7 @@ function ask_user() {
     echo "$CROPCOINUSER:$USERPASS" | chpasswd
 
     CROPCOINHOME=$(sudo -H -u $CROPCOINUSER bash -c 'echo $HOME')
-    DEFAULTCROPCOINFOLDER="$CROPCOINHOME/.cropcoin"
+    DEFAULTCROPCOINFOLDER="$CROPCOINHOME/.smrt"
     read -p "Configuration folder: " -i $DEFAULTCROPCOINFOLDER -e CROPCOINFOLDER
     : ${CROPCOINFOLDER:=$DEFAULTCROPCOINFOLDER}
     mkdir -p $CROPCOINFOLDER
