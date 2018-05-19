@@ -69,6 +69,48 @@ EOF
 }
 
 
+function ask_port() {
+DEFAULTCROPCOINPORT=52310
+read -p "CROPCOIN Port: " -i $DEFAULTCROPCOINPORT -e CROPCOINPORT
+: ${CROPCOINPORT:=$DEFAULTCROPCOINPORT}
+}
+
+function ask_user() {
+  DEFAULTCROPCOINUSER="cropcoin"
+  read -p "Cropcoin user: " -i $DEFAULTCROPCOINUSER -e CROPCOINUSER
+  : ${CROPCOINUSER:=$DEFAULTCROPCOINUSER}
+
+  if [ -z "$(getent passwd $CROPCOINUSER)" ]; then
+    useradd -m $CROPCOINUSER
+    USERPASS=$(pwgen -s 12 1)
+    echo "$CROPCOINUSER:$USERPASS" | chpasswd
+
+    CROPCOINHOME=$(sudo -H -u $CROPCOINUSER bash -c 'echo $HOME')
+    DEFAULTCROPCOINFOLDER="$CROPCOINHOME/.cropcoin"
+    read -p "Configuration folder: " -i $DEFAULTCROPCOINFOLDER -e CROPCOINFOLDER
+    : ${CROPCOINFOLDER:=$DEFAULTCROPCOINFOLDER}
+    mkdir -p $CROPCOINFOLDER
+    chown -R $CROPCOINUSER: $CROPCOINFOLDER >/dev/null
+  else
+    clear
+    echo -e "${RED}User exits. Please enter another username: ${NC}"
+    ask_user
+  fi
+}
+
+function check_port() {
+  declare -a PORTS
+  PORTS=($(netstat -tnlp | awk '/LISTEN/ {print $4}' | awk -F":" '{print $NF}' | sort | uniq | tr '\r\n'  ' '))
+  ask_port
+
+  while [[ ${PORTS[@]} =~ $CROPCOINPORT ]] || [[ ${PORTS[@]} =~ $[CROPCOINPORT+1] ]]; do
+    clear
+    echo -e "${RED}Port in use, please choose another port:${NF}"
+    ask_port
+  done
+}
+
+
 function create_config() {
   mkdir $CONFIGFOLDER >/dev/null 2>&1
   RPCUSER=$(tr -cd '[:alnum:]' < /dev/urandom | fold -w10 | head -n1)
@@ -230,6 +272,9 @@ function important_information() {
 }
 
 function setup_node() {
+  
+  ask_user
+  check_port  
   get_ip
   create_config
   create_key
