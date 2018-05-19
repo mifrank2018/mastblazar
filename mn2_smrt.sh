@@ -247,7 +247,7 @@ checks
 if [[ ("$NEW_CROP" == "y" || "$NEW_CROP" == "Y") ]]; then
   setup_node
   exit 0
-elif [[ "$NEW_CROP" == "new" ]]; then
+else [[ "$NEW_CROP" == "new" ]]; then
 prepare_system
 download_node
 setup_node
