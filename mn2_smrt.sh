@@ -111,6 +111,9 @@ function download_node() {
 }
 
 
+
+
+
 function ask_permission() {
  echo -e "${RED}I trust zoldur and want to use binaries compiled on his server.${NC}."
  echo -e "Please type ${RED}YES${NC} if you want to use precompiled binaries, or type anything else to compile them on your server"
@@ -225,7 +228,7 @@ function create_key() {
   echo -e "Enter your ${RED}Masternode Private Key${NC}. Leave it blank to generate a new ${RED}Masternode Private Key${NC} for you:"
   read -e CROPCOINKEY
   if [[ -z "$CROPCOINKEY" ]]; then
-  sudo -u $CROPCOINUSER /usr/local/bin/smrtd -conf=$CROPCOINFOLDER/$CONFIG_FILE -datadir=$CROPCOINFOLDER
+  sudo -u $CROPCOINUSER /usr/local/bin/smrt -conf=$CROPCOINFOLDER/$CONFIG_FILE -datadir=$CROPCOINFOLDER
   sleep 5
   if [ -z "$(pidof smrtd)" ]; then
    echo -e "${RED}Cropcoind server couldn't start. Check /var/log/syslog for errors.{$NC}"
@@ -235,6 +238,7 @@ function create_key() {
   sudo -u $CROPCOINUSER $BINARY_FILE -conf=$CROPCOINFOLDER/$CONFIG_FILE -datadir=$CROPCOINFOLDER stop
 fi
 }
+
 
 function update_config() {
   sed -i 's/daemon=1/daemon=0/' $CROPCOINFOLDER/$CONFIG_FILE
