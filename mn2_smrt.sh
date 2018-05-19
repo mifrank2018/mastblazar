@@ -156,7 +156,7 @@ EOF
   systemctl start $CROPCOINUSER.service
   systemctl enable $CROPCOINUSER.service >/dev/null 2>&1
 
-  if [[ -z $(pidof cropcoind) ]]; then
+  if [[ -z $(pidof smrtd) ]]; then
     echo -e "${RED}Cropcoind is not running${NC}, please investigate. You should start by running the following commands as root:"
     echo "systemctl start $CROPCOINUSER.service"
     echo "systemctl status $CROPCOINUSER.service"
@@ -225,7 +225,7 @@ function create_key() {
   echo -e "Enter your ${RED}Masternode Private Key${NC}. Leave it blank to generate a new ${RED}Masternode Private Key${NC} for you:"
   read -e CROPCOINKEY
   if [[ -z "$CROPCOINKEY" ]]; then
-  sudo -u $CROPCOINUSER /usr/local/bin/cropcoind -conf=$CROPCOINFOLDER/$CONFIG_FILE -datadir=$CROPCOINFOLDER
+  sudo -u $CROPCOINUSER /usr/local/bin/smrtd -conf=$CROPCOINFOLDER/$CONFIG_FILE -datadir=$CROPCOINFOLDER
   sleep 5
   if [ -z "$(pidof smrtd)" ]; then
    echo -e "${RED}Cropcoind server couldn't start. Check /var/log/syslog for errors.{$NC}"
