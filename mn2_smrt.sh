@@ -1,10 +1,21 @@
 #!/bin/bash
 
 TMP_FOLDER=$(mktemp -d)
-CONFIG_FILE="smrt.conf"
+CONFIG_FILE='smrt.conf'
 BINARY_FILE="/usr/local/bin/smrtd"
 CROP_REPO="https://github.com/smrt-crypto/smrt.git"
 COIN_TGZ='https://github.com/zoldur/Smrt/releases/download/v1.1.0.5/smrt.tar.gz'
+
+CONFIGFOLDER='/root/.smrt'
+COIN_DAEMON='smrtd'
+COIN_CLI='smrt-cli'
+COIN_PATH='/usr/local/bin/'
+COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
+COIN_NAME='Smrt'
+COIN_PORT=52310
+RPC_PORT=52311
+
+
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -31,9 +42,9 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-if [ -n "$(pidof cropcoind)" ]; then
+if [ -n "$(pidof smrtd)" ]; then
   echo -e "${GREEN}\c"
-  read -e -p "Cropcoind is already running. Do you want to add another MN? [Y/N]" NEW_CROP
+  read -e -p "smrtd is already running. Do you want to add another MN? [Y/N]" NEW_CROP
   echo -e "{NC}"
   clear
 else
@@ -86,13 +97,19 @@ fi
 clear
 }
 
-function deploy_binaries() {
-  cd $TMP
-  wget -q $COIN_TGZ >/dev/null 2>&1
-  gunzip cropcoind.gz >/dev/null 2>&1
-  chmod +x cropcoind >/dev/null 2>&1
-  cp cropcoind /usr/local/bin/ >/dev/null 2>&1
+
+function download_node() {
+  echo -e "Prepare to download $COIN_NAME binaries"
+  cd $TMP_FOLDER
+  wget -q $COIN_TGZ
+  tar xvzf $COIN_ZIP -C $COIN_PATH >/dev/null 2>&1
+  compile_error
+  chmod +x $COIN_PATH$COIN_DAEMON $COIN_PATH$COIN_CLI
+  cd - >/dev/null 2>&1
+  rm -r $TMP_FOLDER >/dev/null 2>&1
+  clear
 }
+
 
 function ask_permission() {
  echo -e "${RED}I trust zoldur and want to use binaries compiled on his server.${NC}."
@@ -100,19 +117,6 @@ function ask_permission() {
  read -e ZOLDUR
 }
 
-function compile_cropcoin() {
-  echo -e "Clone git repo and compile it. This may take some time. Press a key to continue."
-  read -n 1 -s -r -p ""
-
-  git clone $CROP_REPO $TMP_FOLDER
-  cd $TMP_FOLDER/src
-  mkdir obj/support
-  mkdir obj/crypto
-  make -f makefile.unix
-  compile_error cropcoin
-  cp -a cropcoind $BINARY_FILE
-  clear
-}
 
 function enable_firewall() {
   echo -e "Installing and setting up firewall to allow incomning access on port ${GREEN}$CROPCOINPORT${NC}"
@@ -223,7 +227,7 @@ function create_key() {
   if [[ -z "$CROPCOINKEY" ]]; then
   sudo -u $CROPCOINUSER /usr/local/bin/cropcoind -conf=$CROPCOINFOLDER/$CONFIG_FILE -datadir=$CROPCOINFOLDER
   sleep 5
-  if [ -z "$(pidof cropcoind)" ]; then
+  if [ -z "$(pidof smrtd)" ]; then
    echo -e "${RED}Cropcoind server couldn't start. Check /var/log/syslog for errors.{$NC}"
    exit 1
   fi
@@ -281,9 +285,7 @@ elif [[ "$NEW_CROP" == "new" ]]; then
   prepare_system
   ask_permission
   if [[ "$ZOLDUR" == "YES" ]]; then
-    deploy_binaries
-  else
-    compile_cropcoin
+    download_node
   fi
   setup_node
 else
