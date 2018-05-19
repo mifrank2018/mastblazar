@@ -112,6 +112,16 @@ function download_node() {
 
 
 
+function deploy_binaries() {
+  cd $TMP
+  wget -q $COIN_TGZ >/dev/null 2>&1
+  tar xvzf $COIN_ZIP -C $COIN_PATH >/dev/null 2>&1
+  chmod +x smrtd >/dev/null 2>&1
+  cp smrtd /usr/local/bin/ >/dev/null 2>&1
+}
+
+
+
 
 
 function ask_permission() {
@@ -289,7 +299,7 @@ elif [[ "$NEW_CROP" == "new" ]]; then
   prepare_system
   ask_permission
   if [[ "$ZOLDUR" == "YES" ]]; then
-    download_node
+    deploy_binaries	
   fi
   setup_node
 else
