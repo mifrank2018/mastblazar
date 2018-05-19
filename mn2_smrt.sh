@@ -105,7 +105,6 @@ function download_node() {
   tar xvzf $COIN_ZIP -C $COIN_PATH >/dev/null 2>&1
   compile_error
   chmod +x $COIN_PATH$COIN_DAEMON $COIN_PATH$COIN_CLI
-  cp smrtd /usr/local/bin/ >/dev/null 2>&1
   cd - >/dev/null 2>&1
   rm -r $TMP_FOLDER >/dev/null 2>&1
   clear
@@ -299,11 +298,11 @@ if [[ ("$NEW_CROP" == "y" || "$NEW_CROP" == "Y") ]]; then
 elif [[ "$NEW_CROP" == "new" ]]; then
   prepare_system
   ask_permission
-  if [[ "$ZOLDUR" == "YES" ]]; then
-    download_node	
-  fi
+  download_node	
   setup_node
 else
   echo -e "${GREEN}Cropcoind already running.${NC}"
   exit 0
 fi
+
+
