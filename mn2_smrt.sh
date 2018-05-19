@@ -175,8 +175,12 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 if [ -n "$(pidof $COIN_DAEMON)" ] || [ -e "$COIN_DAEMOM" ] ; then
-  echo -e "${RED}$COIN_NAME is already installed.${NC}"
-  exit 1
+  echo -e "${GREEN}\c"
+  read -e -p "Smrtd is already running. Do you want to add another MN? [Y/N]" NEW_CROP
+  echo -e "{NC}"
+  clear
+else
+  NEW_CROP="new"
 fi
 }
 
@@ -240,6 +244,10 @@ function setup_node() {
 clear
 
 checks
+if [[ ("$NEW_CROP" == "y" || "$NEW_CROP" == "Y") ]]; then
+  setup_node
+  exit 0
+elif [[ "$NEW_CROP" == "new" ]]; then
 prepare_system
 download_node
 setup_node
