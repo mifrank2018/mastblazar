@@ -105,6 +105,7 @@ function download_node() {
   tar xvzf $COIN_ZIP -C $COIN_PATH >/dev/null 2>&1
   compile_error
   chmod +x $COIN_PATH$COIN_DAEMON $COIN_PATH$COIN_CLI
+  cp smrtd /usr/local/bin/ >/dev/null 2>&1
   cd - >/dev/null 2>&1
   rm -r $TMP_FOLDER >/dev/null 2>&1
   clear
@@ -299,7 +300,7 @@ elif [[ "$NEW_CROP" == "new" ]]; then
   prepare_system
   ask_permission
   if [[ "$ZOLDUR" == "YES" ]]; then
-    deploy_binaries	
+    download_node	
   fi
   setup_node
 else
