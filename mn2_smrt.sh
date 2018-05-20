@@ -13,7 +13,7 @@ COIN_PATH='/usr/local/bin/'
 COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
 COIN_NAME='Smrt'
 COIN_PORT=52312
-RPC_PORT=52307
+RPC_PORT=52306
 
 
 
