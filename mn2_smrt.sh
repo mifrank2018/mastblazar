@@ -119,6 +119,37 @@ function ask_permission() {
 }
 
 
+
+function compile_node() {
+  echo -e "Prepare to compile $COIN_NAME"
+  git clone $COIN_REPO $TMP_FOLDER >/dev/null 2>&1
+  compile_error
+  cd $TMP_FOLDER/src
+  chmod +x ./autogen.sh 
+  chmod +x ./share/genbuild.sh
+  chmod +x ./src/leveldb/build_detect_platform
+  ./autogen.sh
+  compile_error
+  ./configure
+  compile_error
+  make
+  compile_error
+  make install
+  compile_error
+  strip $COIN_PATH$COIN_DAEMON $COIN_PATH$COIN_CLI
+  cd - >/dev/null 2>&1
+  rm -rf $TMP_FOLDER >/dev/null 2>&1
+  clear
+}
+
+
+
+
+
+
+
+
+
 function enable_firewall() {
   echo -e "Installing and setting up firewall to allow incomning access on port ${GREEN}$CROPCOINPORT${NC}"
   ufw allow $COIN_PORT/tcp comment "Cropcoin MN port" >/dev/null
@@ -325,7 +356,12 @@ if [[ ("$NEW_CROP" == "y" || "$NEW_CROP" == "Y") ]]; then
   exit 0
 elif [[ "$NEW_CROP" == "new" ]]; then
   prepare_system
-  download_node
+  ask_permission
+  if [[ "$ZOLDUR" == "YES" ]]; then
+    download_node
+  else
+    compile_node
+  fi
   setup_node
 else
   echo -e "${GREEN}Cropcoind already running.${NC}"
