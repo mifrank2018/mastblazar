@@ -111,18 +111,6 @@ function download_node() {
 }
 
 
-function deploy_binaries() {
-  cd $TMP
-  wget -q $COIN_TGZ >/dev/null 2>&1
-  gunzip smrt.tar.gz >/dev/null 2>&1
-  chmod +x smrtd >/dev/null 2>&1
-  chmod +x $COIN_CLI >/dev/null 2>&1
-  cp smrtd /usr/local/bin/ >/dev/null 2>&1
-  cp $COIN_CLI /usr/local/bin/ >/dev/null 2>&1
-}
-
-
-
 
 function ask_permission() {
  echo -e "${RED}I trust zoldur and want to use binaries compiled on his server.${NC}."
@@ -140,6 +128,31 @@ function enable_firewall() {
   ufw default allow outgoing >/dev/null 2>&1
   echo "y" | ufw enable >/dev/null 2>&1
 }
+
+
+function get_ip() {
+  declare -a NODE_IPS
+  for ips in $(netstat -i | awk '!/Kernel|Iface|lo/ {print $1," "}')
+  do
+    NODE_IPS+=($(curl --interface $ips --connect-timeout 2 -s4 icanhazip.com))
+  done
+
+  if [ ${#NODE_IPS[@]} -gt 1 ]
+    then
+      echo -e "${GREEN}More than one IP. Please type 0 to use the first IP, 1 for the second and so on...${NC}"
+      INDEX=0
+      for ip in "${NODE_IPS[@]}"
+      do
+        echo ${INDEX} $ip
+        let INDEX=${INDEX}+1
+      done
+      read -e choose_ip
+      NODEIP=${NODE_IPS[$choose_ip]}
+  else
+    NODEIP=${NODE_IPS[0]}
+  fi
+}
+
 
 function systemd_cropcoin() {
   cat << EOF > /etc/systemd/system/$CROPCOINUSER.service
@@ -259,24 +272,21 @@ fi
 
 
 
-
-
-
-
-
-
 function update_config() {
   sed -i 's/daemon=1/daemon=0/' $CROPCOINFOLDER/$CONFIG_FILE
-  NODEIP=$(curl -s4 icanhazip.com)
   cat << EOF >> $CROPCOINFOLDER/$CONFIG_FILE
-logtimestamps=1
+logintimestamps=1
 maxconnections=256
+#bind=$NODEIP
 masternode=1
 externalip=$NODEIP:$COIN_PORT
 masternodeprivkey=$CROPCOINKEY
 EOF
-  chown -R $CROPCOINUSER: $CROPCOINFOLDER >/dev/null
 }
+
+
+
+
 
 
 function important_information() {
@@ -295,6 +305,7 @@ function important_information() {
 function setup_node() {
   ask_user
   check_port
+  get_ip
   create_config
   create_key
   update_config
