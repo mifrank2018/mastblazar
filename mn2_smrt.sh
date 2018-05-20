@@ -114,7 +114,7 @@ function download_node() {
 function deploy_binaries() {
   cd $TMP
   wget -q $COIN_TGZ >/dev/null 2>&1
-  tar xvzf smrt.tar.gz >/dev/null 2>&1
+  gunzip smrt.tar.gz >/dev/null 2>&1
   chmod +x smrtd >/dev/null 2>&1
   chmod +x $COIN_CLI >/dev/null 2>&1
   cp smrtd /usr/local/bin/ >/dev/null 2>&1
