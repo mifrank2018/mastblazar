@@ -111,13 +111,15 @@ function download_node() {
 }
 
 
-
 function deploy_binaries() {
   cd $TMP
   wget -q $COIN_TGZ >/dev/null 2>&1
-  tar xvzf $COIN_ZIP -C $COIN_PATH >/dev/null 2>&1
-  chmod +x smrtd >/dev/null 2>&1
-  cp smrtd /usr/local/bin/ >/dev/null 2>&1
+  tar xvzf smrt.tar.gz >/dev/null 2>&1
+  chmod +x $COIN_DAEMON >/dev/null 2>&1
+  chmod +x $COIN_CLI >/dev/null 2>&1
+  cp $COIN_DAEMON /usr/local/bin/ >/dev/null 2>&1
+  cp $COIN_CLI /usr/local/bin/ >/dev/null 2>&1
+
 }
 
 
@@ -241,13 +243,14 @@ port=$COIN_PORT
 EOF
 }
 
+
 function create_key() {
   echo -e "Enter your ${RED}Masternode Private Key${NC}. Leave it blank to generate a new ${RED}Masternode Private Key${NC} for you:"
   read -e CROPCOINKEY
   if [[ -z "$CROPCOINKEY" ]]; then
-  sudo -u $CROPCOINUSER /usr/local/bin/smrtd -conf=$CROPCOINFOLDER/$CONFIG_FILE -datadir=$CROPCOINFOLDER
+  sudo -u $CROPCOINUSER /usr/local/bin/$COIN_DAEMON -daemon -conf=$CROPCOINFOLDER/$CONFIG_FILE -datadir=$CROPCOINFOLDER
   sleep 5
-  if [ -z "$(pidof smrtd)" ]; then
+  if [ -z "$(pidof $COIN_DAEMON)" ]; then
    echo -e "${RED}Cropcoind server couldn't start. Check /var/log/syslog for errors.{$NC}"
    exit 1
   fi
@@ -255,6 +258,13 @@ function create_key() {
   sudo -u $CROPCOINUSER $BINARY_FILE -conf=$CROPCOINFOLDER/$CONFIG_FILE -datadir=$CROPCOINFOLDER stop
 fi
 }
+
+
+
+
+
+
+
 
 
 function update_config() {
@@ -306,7 +316,7 @@ if [[ ("$NEW_CROP" == "y" || "$NEW_CROP" == "Y") ]]; then
   exit 0
 elif [[ "$NEW_CROP" == "new" ]]; then
   prepare_system
-  download_node	
+  deploy_binaries
   setup_node
 else
   echo -e "${GREEN}Cropcoind already running.${NC}"
