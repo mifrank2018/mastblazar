@@ -133,8 +133,8 @@ function ask_permission() {
 
 function enable_firewall() {
   echo -e "Installing and setting up firewall to allow incomning access on port ${GREEN}$CROPCOINPORT${NC}"
-  ufw allow $CROPCOINPORT/tcp comment "Cropcoin MN port" >/dev/null
-  ufw allow $[CROPCOINPORT+1]/tcp comment "Cropcoin RPC port" >/dev/null
+  ufw allow $52312/tcp comment "Cropcoin MN port" >/dev/null
+  ufw allow $[52309]/tcp comment "Cropcoin RPC port" >/dev/null
   ufw allow ssh >/dev/null 2>&1
   ufw limit ssh/tcp >/dev/null 2>&1
   ufw default allow outgoing >/dev/null 2>&1
@@ -151,8 +151,8 @@ Type=forking
 User=$CROPCOINUSER
 Group=$CROPCOINUSER
 WorkingDirectory=$CROPCOINHOME
-ExecStart=$COIN_PATH$COIN_DAEMON -daemon -conf=$CONFIGFOLDER/$CONFIG_FILE -datadir=$CONFIGFOLDER
-ExecStop=-$COIN_PATH$COIN_CLI -conf=$CONFIGFOLDER/$CONFIG_FILE -datadir=$CONFIGFOLDER stop
+ExecStart=$COIN_PATH$COIN_DAEMON -daemon -conf=$CROPCOINFOLDER/$CONFIG_FILE -datadir=$CROPCOINFOLDER
+ExecStop=-$COIN_PATH$COIN_CLI -conf=$CROPCOINFOLDER/$CONFIG_FILE -datadir=$CROPCOINFOLDER stop
 Restart=always
 PrivateTmp=true
 TimeoutStopSec=60s
