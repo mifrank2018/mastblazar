@@ -259,7 +259,7 @@ function create_key() {
   echo -e "Enter your ${RED}Masternode Private Key${NC}. Leave it blank to generate a new ${RED}Masternode Private Key${NC} for you:"
   read -e CROPCOINKEY
   if [[ -z "$CROPCOINKEY" ]]; then
-  sudo -u $CROPCOINUSER /usr/local/bin/$COIN_DAEMON -daemon -conf=$CROPCOINFOLDER/$CONFIG_FILE -datadir=$CROPCOINFOLDER
+  $COIN_PATH$COIN_DAEMON -daemon -conf=$CROPCOINFOLDER/$CONFIG_FILE -datadir=$CROPCOINFOLDER
   sleep 5
   if [ -z "$(pidof $COIN_DAEMON)" ]; then
    echo -e "${RED}Cropcoind server couldn't start. Check /var/log/syslog for errors.{$NC}"
@@ -325,7 +325,7 @@ if [[ ("$NEW_CROP" == "y" || "$NEW_CROP" == "Y") ]]; then
   exit 0
 elif [[ "$NEW_CROP" == "new" ]]; then
   prepare_system
-  deploy_binaries
+  download_node
   setup_node
 else
   echo -e "${GREEN}Cropcoind already running.${NC}"
