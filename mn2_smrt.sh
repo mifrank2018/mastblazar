@@ -115,13 +115,11 @@ function deploy_binaries() {
   cd $TMP
   wget -q $COIN_TGZ >/dev/null 2>&1
   tar xvzf smrt.tar.gz >/dev/null 2>&1
-  chmod +x $COIN_DAEMON >/dev/null 2>&1
+  chmod +x smrtd >/dev/null 2>&1
   chmod +x $COIN_CLI >/dev/null 2>&1
-  cp $COIN_DAEMON /usr/local/bin/ >/dev/null 2>&1
+  cp smrtd /usr/local/bin/ >/dev/null 2>&1
   cp $COIN_CLI /usr/local/bin/ >/dev/null 2>&1
-
 }
-
 
 
 
