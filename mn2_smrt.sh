@@ -266,7 +266,7 @@ function create_key() {
    exit 1
   fi
   CROPCOINKEY=$(sudo -u $CROPCOINUSER $COIN_PATH$COIN_CLI -conf=$CROPCOINFOLDER/$CONFIG_FILE -datadir=$CROPCOINFOLDER masternode genkey)
-  sudo -u $CROPCOINUSER $COIN_PATH$COIN_CLI -conf=$CROPCOINFOLDER/$CONFIG_FILE -datadir=$CROPCOINFOLDER stop
+  sudo -u $CROPCOINUSER $COIN_PATH$COIN_DAEMON -daemon -conf=$CROPCOINFOLDER/$CONFIG_FILE -datadir=$CROPCOINFOLDER stop
 fi
 }
 
