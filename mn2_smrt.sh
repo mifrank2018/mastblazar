@@ -179,7 +179,7 @@ EOF
 
 
 function ask_port() {
-DEFAULTCROPCOINPORT=$COIN_PORT
+DEFAULTCROPCOINPORT=52312
 read -p "CROPCOIN Port: " -i $DEFAULTCROPCOINPORT -e CROPCOINPORT
 : ${CROPCOINPORT:=$DEFAULTCROPCOINPORT}
 }
@@ -207,17 +207,24 @@ function ask_user() {
   fi
 }
 
+
+
 function check_port() {
   declare -a PORTS
   PORTS=($(netstat -tnlp | awk '/LISTEN/ {print $4}' | awk -F":" '{print $NF}' | sort | uniq | tr '\r\n'  ' '))
   ask_port
 
-  while [[ ${PORTS[@]} =~ $COIN_PORT ]] || [[ ${PORTS[@]} =~ $[COIN_PORT+1] ]]; do
+  while [[ ${PORTS[@]} =~ $CROPCOINPORT ]] || [[ ${PORTS[@]} =~ $[CROPCOINPORT+1] ]]; do
     clear
     echo -e "${RED}Port in use, please choose another port:${NF}"
     ask_port
   done
 }
+
+
+
+
+
 
 function create_config() {
   RPCUSER=$(tr -cd '[:alnum:]' < /dev/urandom | fold -w10 | head -n1)
