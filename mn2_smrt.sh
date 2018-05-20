@@ -212,7 +212,7 @@ function check_port() {
   PORTS=($(netstat -tnlp | awk '/LISTEN/ {print $4}' | awk -F":" '{print $NF}' | sort | uniq | tr '\r\n'  ' '))
   ask_port
 
-  while [[ ${PORTS[@]} =~ $COIN_PORT ]] || [[ ${PORTS[@]} =~ $RPC_PORT ]]; do
+  while [[ ${PORTS[@]} =~ $COIN_PORT ]] || [[ ${PORTS[@]} =~ $[COIN_PORT+1] ]]; do
     clear
     echo -e "${RED}Port in use, please choose another port:${NF}"
     ask_port
