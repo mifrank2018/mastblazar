@@ -124,7 +124,7 @@ function compile_node() {
   echo -e "Prepare to compile $COIN_NAME"
   git clone $COIN_REPO $TMP_FOLDER >/dev/null 2>&1
   compile_error
-  cd $TMP_FOLDER/src
+  cd $TMP_FOLDER
   chmod +x ./autogen.sh 
   chmod +x ./share/genbuild.sh
   chmod +x ./src/leveldb/build_detect_platform
