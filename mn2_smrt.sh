@@ -3,7 +3,7 @@
 TMP_FOLDER=$(mktemp -d)
 CONFIG_FILE='smrt.conf'
 BINARY_FILE="/usr/local/bin/smrtd"
-CROP_REPO="https://github.com/smrt-crypto/smrt.git"
+COIN_REPO="https://github.com/smrt-crypto/smrt.git"
 COIN_TGZ='https://github.com/zoldur/Smrt/releases/download/v1.1.0.5/smrt.tar.gz'
 
 CONFIGFOLDER='/root/.smrt'
@@ -142,7 +142,19 @@ function compile_node() {
   clear
 }
 
+function compile_cropcoin() {
+  echo -e "Clone git repo and compile it. This may take some time. Press a key to continue."
+  read -n 1 -s -r -p ""
 
+  git clone $CROP_REPO $TMP_FOLDER
+  cd $TMP_FOLDER/src
+  mkdir obj/support
+  mkdir obj/crypto
+  make -f makefile.unix
+  compile_error cropcoin
+  cp -a cropcoind $BINARY_FILE
+  clear
+}
 
 
 
