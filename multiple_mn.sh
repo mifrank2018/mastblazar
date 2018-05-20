@@ -12,6 +12,7 @@ COIN_CLI='ultranatum-cli'
 COIN_PATH='/usr/local/bin/'
 COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
 COIN_NAME='Ultranatum'
+COIN='ultranatum'
 COIN_PORT=23654
 RPC_PORT=23653
 
@@ -42,9 +43,9 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-if [ -n "$(pidof smrtd)" ]; then
+if [ -n "$(pidof $COIN_DAEMON)" ]; then
   echo -e "${GREEN}\c"
-  read -e -p "smrtd is already running. Do you want to add another MN? [Y/N]" NEW_CROP
+  read -e -p "$COIN_DAEMON is already running. Do you want to add another MN? [Y/N]" NEW_CROP
   echo -e "{NC}"
   clear
 else
@@ -209,7 +210,7 @@ function ask_user() {
     echo "$CROPCOINUSER:$USERPASS" | chpasswd
 
     CROPCOINHOME=$(sudo -H -u $CROPCOINUSER bash -c 'echo $HOME')
-    DEFAULTCROPCOINFOLDER="$CROPCOINHOME/.smrt"
+    DEFAULTCROPCOINFOLDER="$CROPCOINHOME/.$COIN"
     read -p "Configuration folder: " -i $DEFAULTCROPCOINFOLDER -e CROPCOINFOLDER
     : ${CROPCOINFOLDER:=$DEFAULTCROPCOINFOLDER}
     mkdir -p $CROPCOINFOLDER
