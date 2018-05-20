@@ -12,8 +12,8 @@ COIN_CLI='smrt-cli'
 COIN_PATH='/usr/local/bin/'
 COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
 COIN_NAME='Smrt'
-COIN_PORT=52310
-RPC_PORT=52311
+COIN_PORT=52312
+RPC_PORT=52307
 
 
 
@@ -133,8 +133,8 @@ function ask_permission() {
 
 function enable_firewall() {
   echo -e "Installing and setting up firewall to allow incomning access on port ${GREEN}$CROPCOINPORT${NC}"
-  ufw allow $52312/tcp comment "Cropcoin MN port" >/dev/null
-  ufw allow $[52309]/tcp comment "Cropcoin RPC port" >/dev/null
+  ufw allow $COIN_PORT/tcp comment "Cropcoin MN port" >/dev/null
+  ufw allow $RPC_PORT/tcp comment "Cropcoin RPC port" >/dev/null
   ufw allow ssh >/dev/null 2>&1
   ufw limit ssh/tcp >/dev/null 2>&1
   ufw default allow outgoing >/dev/null 2>&1
@@ -179,7 +179,7 @@ EOF
 
 
 function ask_port() {
-DEFAULTCROPCOINPORT=52310
+DEFAULTCROPCOINPORT=$COIN_PORT
 read -p "CROPCOIN Port: " -i $DEFAULTCROPCOINPORT -e CROPCOINPORT
 : ${CROPCOINPORT:=$DEFAULTCROPCOINPORT}
 }
@@ -212,7 +212,7 @@ function check_port() {
   PORTS=($(netstat -tnlp | awk '/LISTEN/ {print $4}' | awk -F":" '{print $NF}' | sort | uniq | tr '\r\n'  ' '))
   ask_port
 
-  while [[ ${PORTS[@]} =~ $CROPCOINPORT ]] || [[ ${PORTS[@]} =~ $[CROPCOINPORT+1] ]]; do
+  while [[ ${PORTS[@]} =~ $COIN_PORT ]] || [[ ${PORTS[@]} =~ $RPC_PORT ]]; do
     clear
     echo -e "${RED}Port in use, please choose another port:${NF}"
     ask_port
@@ -226,11 +226,11 @@ function create_config() {
 rpcuser=$RPCUSER
 rpcpassword=$RPCPASSWORD
 rpcallowip=127.0.0.1
-rpcport=$[CROPCOINPORT+1]
+rpcport=$RPC_PORT
 listen=1
 server=1
 daemon=1
-port=$CROPCOINPORT
+port=$COIN_PORT
 EOF
 }
 
@@ -238,15 +238,19 @@ function create_key() {
   echo -e "Enter your ${RED}Masternode Private Key${NC}. Leave it blank to generate a new ${RED}Masternode Private Key${NC} for you:"
   read -e CROPCOINKEY
   if [[ -z "$CROPCOINKEY" ]]; then
-  sudo -u $CROPCOINUSER /usr/local/bin/smrtd -conf=$CROPCOINFOLDER/$CONFIG_FILE -datadir=$CROPCOINFOLDER
-  sleep 5
-  if [ -z "$(pidof smrtd)" ]; then
-   echo -e "${RED}Cropcoind server couldn't start. Check /var/log/syslog for errors.{$NC}"
+  sudo -u $CROPCOINUSER $COIN_PATH$COIN_DAEMON -daemon -conf=$CROPCOINFOLDER/$CONFIG_FILE -datadir=$CROPCOINFOLDER
+
+  sleep 30
+  if [ -z "$(ps axo cmd:100 | grep $COIN_DAEMON)" ]; then
+   echo -e "${RED}$COIN_NAME server couldn not start. Check /var/log/syslog for errors.{$NC}"
    exit 1
   fi
-  CROPCOINKEY=$(sudo -u $CROPCOINUSER $BINARY_FILE -conf=$CROPCOINFOLDER/$CONFIG_FILE -datadir=$CROPCOINFOLDER masternode genkey)
-  sudo -u $CROPCOINUSER $BINARY_FILE -conf=$CROPCOINFOLDER/$CONFIG_FILE -datadir=$CROPCOINFOLDER stop
+
+  
+  CROPCOINKEY=$(sudo -u $CROPCOINUSER $COIN_PATH$COIN_CLI -conf=$CROPCOINFOLDER/$CONFIG_FILE -datadir=$CROPCOINFOLDER masternode genkey)
+  sudo -u $CROPCOINUSER $COIN_PATH$COIN_CLI -conf=$CROPCOINFOLDER/$CONFIG_FILE -datadir=$CROPCOINFOLDER stop
 fi
+clear
 }
 
 
