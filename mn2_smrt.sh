@@ -142,24 +142,6 @@ function compile_node() {
   clear
 }
 
-function compile_cropcoin() {
-  echo -e "Clone git repo and compile it. This may take some time. Press a key to continue."
-  read -n 1 -s -r -p ""
-
-  git clone $CROP_REPO $TMP_FOLDER
-  cd $TMP_FOLDER/src
-  mkdir obj/support
-  mkdir obj/crypto
-  make -f makefile.unix
-  compile_error cropcoin
-  cp -a cropcoind $BINARY_FILE
-  clear
-}
-
-
-
-
-
 
 
 function enable_firewall() {
