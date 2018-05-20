@@ -151,15 +151,14 @@ Type=forking
 User=$CROPCOINUSER
 Group=$CROPCOINUSER
 WorkingDirectory=$CROPCOINHOME
-ExecStart=$BINARY_FILE -daemon
-ExecStop=$BINARY_FILE stop
+ExecStart=$COIN_PATH$COIN_DAEMON -daemon -conf=$CONFIGFOLDER/$CONFIG_FILE -datadir=$CONFIGFOLDER
+ExecStop=-$COIN_PATH$COIN_CLI -conf=$CONFIGFOLDER/$CONFIG_FILE -datadir=$CONFIGFOLDER stop
 Restart=always
 PrivateTmp=true
 TimeoutStopSec=60s
 TimeoutStartSec=10s
 StartLimitInterval=120s
 StartLimitBurst=5
-  
 [Install]
 WantedBy=multi-user.target
 EOF
@@ -169,14 +168,15 @@ EOF
   systemctl start $CROPCOINUSER.service
   systemctl enable $CROPCOINUSER.service >/dev/null 2>&1
 
-  if [[ -z $(pidof smrtd) ]]; then
+  if [[ -z "$(ps axo cmd:100 | egrep $COIN_DAEMON)" ]]; then
     echo -e "${RED}Cropcoind is not running${NC}, please investigate. You should start by running the following commands as root:"
     echo "systemctl start $CROPCOINUSER.service"
     echo "systemctl status $CROPCOINUSER.service"
-    echo "less /var/log/syslog"
+    echo -e "less /var/log/syslog${NC}"
     exit 1
   fi
 }
+
 
 function ask_port() {
 DEFAULTCROPCOINPORT=52310
@@ -283,8 +283,9 @@ function setup_node() {
   create_key
   update_config
   enable_firewall
-  systemd_cropcoin
   important_information
+  systemd_cropcoin
+  
 }
 
 
