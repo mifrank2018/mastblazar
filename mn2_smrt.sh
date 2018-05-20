@@ -261,11 +261,12 @@ function update_config() {
 logtimestamps=1
 maxconnections=256
 masternode=1
-masternodeaddr=$NODEIP:$CROPCOINPORT
+externalip=$NODEIP:$COIN_PORT
 masternodeprivkey=$CROPCOINKEY
 EOF
   chown -R $CROPCOINUSER: $CROPCOINFOLDER >/dev/null
 }
+
 
 function important_information() {
  echo
