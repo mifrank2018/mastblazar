@@ -232,7 +232,7 @@ function create_swap() {
 }
 
 
-function install sentinel() {
+function install_sentinel() {
 echo && echo "Installing Sentinel..."
 sleep 3
 cd
@@ -273,7 +273,7 @@ function setup_node() {
   update_config
   enable_firewall
   important_information
-  install sentinel
+  install_sentinel
   configure_systemd
 }
 
